@@ -24,7 +24,7 @@ run_command = utils.run_command
 
 def install_build_dependencies() -> bool:
     """Install build dependencies."""
-    success, _ = run_command([str(PIP), "install", "--upgrade", "pip", "setuptools", "wheel"])
+    success, _ = run_command([str(PIP), "install", "--upgrade", "pip", "setuptools", "wheel", "build"])
     return success
 
 
