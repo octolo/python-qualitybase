@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qualitybase"
-version = "0.2.3"
+version = "0.2.4"
 description = "Standardized services and tooling for managing code quality, development workflows, and project maintenance in Python projects"
 readme = "README.md"
 requires-python = ">=3.10"
