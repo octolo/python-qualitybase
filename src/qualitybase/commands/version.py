@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from ..cli import _get_package_name  # noqa: TID252
+from qualitybase.helpers.cli import _CLI_CONTEXT, _get_package_name_from_path
+
 from .base import Command
 
 
 def _version_command(_args: list[str]) -> bool:
     """Show version information."""
-    package_name = _get_package_name()
+    cli_path = _CLI_CONTEXT.get("cli_file_path")
+    package_name = _get_package_name_from_path(cli_path) if cli_path else "unknown"
 
     try:
         package_module = __import__(package_name, fromlist=["__version__"])
@@ -21,4 +23,3 @@ def _version_command(_args: list[str]) -> bool:
 
 
 version_command = Command(_version_command, "Show version information")
-

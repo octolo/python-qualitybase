@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from ..cli import _discover_commands, _get_package_name  # noqa: TID252
+from qualitybase.helpers.cli import _CLI_CONTEXT, _discover_commands, _get_package_name_from_path
+
 from .base import Command
 
 
 def _help_command(_args: list[str]) -> bool:
     """Display available commands."""
-    package_name = _get_package_name()
+    cli_path = _CLI_CONTEXT.get("cli_file_path")
+    package_name = _get_package_name_from_path(cli_path) if cli_path else "unknown"
     commands = _discover_commands()
 
     print(f"Usage: {package_name} <command> [args...]")
@@ -23,4 +25,3 @@ def _help_command(_args: list[str]) -> bool:
 
 
 help_command = Command(_help_command, "Display available commands")
-

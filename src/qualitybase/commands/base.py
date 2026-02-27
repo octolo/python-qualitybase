@@ -8,25 +8,29 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
 
-class Command:
+class Command:  # pylint: disable=too-few-public-methods
     """Command class containing description and execution function."""
 
     description: str
     func: Callable[[list[str]], bool]
+    inherit: bool
 
     def __init__(
         self,
         func: Callable[[list[str]], bool],
         description: str = "",
+        inherit: bool = True,
     ) -> None:
         """Initialize a command.
 
         Args:
             func: Function to execute. Takes args list and returns bool.
             description: Command description for help.
+            inherit: If False, command is excluded when discovered via packages config.
         """
         self.func = func
         self.description = description or (func.__doc__ or "").split("\n")[0].strip()
+        self.inherit = inherit
 
     def __call__(self, args: list[str]) -> bool:
         """Execute the command.
@@ -38,4 +42,3 @@ class Command:
             True if command executed successfully, False otherwise.
         """
         return self.func(args)
-

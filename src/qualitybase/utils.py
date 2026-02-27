@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
+"""Utility functions for qualitybase services."""
 
+# pylint: disable=invalid-name,import-outside-toplevel,redefined-outer-name
+# pylint: disable=reimported,broad-exception-caught
 from __future__ import annotations
 
 import json
@@ -245,11 +248,11 @@ def format_results_json(results: dict[str, bool | dict[str, Any]]) -> str:
 def print_results(
     results: dict[str, bool | dict[str, Any]],
     title: str | None = None,
-    format: str = "table",
+    fmt: str = "table",
     show_status: bool = True,
 ) -> None:
     """Print results in the specified format."""
-    if format.lower() == "json":
+    if fmt.lower() == "json":
         output = format_results_json(results)
         print(output)
     else:
@@ -302,18 +305,14 @@ def print_summary(summary: dict[str, Any]) -> None:
     if summary.get("total_warnings", 0) > 0:
         print(f"{YELLOW}Total warnings: {summary['total_warnings']}{NC}")
     print_separator()
-
-
 def load_service_utils() -> Any:
     """Load utils module after adding project root to sys.path."""
-    from pathlib import Path
-
     _services_dir = Path(__file__).resolve().parent
     _project_root = _services_dir.parent
     if str(_project_root) not in sys.path:
         sys.path.insert(0, str(_project_root))
 
-    from services import utils
+    from services import utils  # pylint: disable=import-error
     return utils
 
 
@@ -325,7 +324,7 @@ def run_service_command(command_func: Any, *args: Any, **kwargs: Any) -> int:
     except KeyboardInterrupt:
         print_warning("\nOperation cancelled by user.")
         return 130
-    except Exception as exc:
+    except Exception as exc:  # pylint: disable=broad-exception-caught
         print_error(f"Error: {exc}")
         import traceback
 
@@ -343,12 +342,11 @@ def check_venv_required() -> bool:
 
 def check_github_cli() -> bool:
     """Check if GitHub CLI is available."""
-    import subprocess
-
     gh_result = subprocess.run(
         ["gh", "--version"],
         capture_output=True,
         text=True,
+        check=False,
     )
     if gh_result.returncode != 0:
         print_error("GitHub CLI (gh) not found. Install from: https://cli.github.com/")
@@ -408,4 +406,3 @@ def get_quality_common_imports() -> dict[str, Any]:
         "check_venv_required": check_venv_required,
         "snake_to_camel": snake_to_camel,
     }
-

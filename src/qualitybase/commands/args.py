@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import argparse
-import sys
 from typing import Any
 
 
 def create_parser_from_config(
     config: dict[str, dict[str, Any]], prog: str = 'command', add_help: bool = False
 ) -> argparse.ArgumentParser:
+    """Create an ArgumentParser from a config dict of option definitions."""
     parser = argparse.ArgumentParser(prog=prog, add_help=add_help, allow_abbrev=False)
 
     for arg_name, arg_config in config.items():
@@ -34,6 +34,7 @@ def create_parser_from_config(
 
 
 def classify_args(values: list[str]) -> dict[str, list[str] | dict[str, str]]:
+    """Split values into positional args (no '=') and kwargs (key=val)."""
     args_list: list[str] = []
     kwargs_dict: dict[str, str] = {}
 
@@ -50,28 +51,28 @@ def classify_args(values: list[str]) -> dict[str, list[str] | dict[str, str]]:
 def parse_args_from_config(
     args: list[str], config: dict[str, dict[str, Any]], prog: str = 'command'
 ) -> dict[str, Any]:
+    """Parse args using config; returns dict with option values and 'args' for positionals."""
     parser = create_parser_from_config(config, prog=prog)
-    
+
     try:
         parsed, unknown = parser.parse_known_args(args)
     except SystemExit:
         return {}
-    
+
     result: dict[str, Any] = {}
-    
-    for arg_name in config.keys():
+
+    for arg_name in config:
         value = getattr(parsed, arg_name, None)
         arg_config = config[arg_name]
-        
+
         if value is None:
             continue
-        
+
         has_nargs = 'nargs' in arg_config and arg_config['nargs'] is not None
-            
+
         if isinstance(value, list):
-            if has_nargs:
-                if value:
-                    result[arg_name] = classify_args(value)
+            if has_nargs and value:
+                result[arg_name] = classify_args(value)
             else:
                 result[arg_name] = value
         elif isinstance(value, bool):
@@ -82,5 +83,6 @@ def parse_args_from_config(
                 result[arg_name] = {'args': [value], 'kwargs': {}}
             else:
                 result[arg_name] = value
-    
+
+    result['args'] = unknown
     return result
