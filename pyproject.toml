@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qualitybase"
+version = "0.2.6"
+description = "Standardized services and tooling for managing code quality, development workflows, and project maintenance in Python projects"
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  {name = "Octolo", email = "dev@octolo.tech"}
+]
+keywords = [
+  "code-quality",
+  "linting",
+  "testing",
+  "development-tools",
+  "python",
+  "ci-cd",
+  "code-analysis",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+    "clicommands>=0.0.1",
+]
+
+[project.optional-dependencies]
+lint = [
+  "ruff>=0.5.0",
+  "mypy>=1.0.0",
+]
+quality = [
+  "radon>=6.0.0",
+  "vulture>=2.0.0",
+]
+security = [
+  "bandit>=1.7.0",
+]
+security-audit = [
+  "pip-audit>=2.7.0",
+]
+build = [
+  "build>=1.0.0",
+]
+
+[project.scripts]
+qualitybase = "qualitybase.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/hicinformatic/python-qualitybase"
+Repository = "https://github.com/hicinformatic/python-qualitybase"
+Documentation = "https://github.com/hicinformatic/python-qualitybase#readme"
+Issues = "https://github.com/hicinformatic/python-qualitybase/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "venv", "build", "dist"]
+skips = [
+  "B101",  # assert_used
+  "B404",  # subprocess import (build/quality commands require it)
+  "B603",  # subprocess without shell (args are controlled, no injection)
+  "B607",  # partial path (gh is standard CLI)
+  "B110",  # try_except_pass (intentional fallbacks in path resolution, optional loading)
+]
