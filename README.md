@@ -66,6 +66,12 @@ automated test suite is added.
 - `docs/development.md` — Development guidelines
 - `docs/AI.md` — AI assistant contract
 
+## CI packaging check
+
+CI also installs the built wheel(s) in a clean environment and checks their
+dependencies and imports without publishing. This installation check is
+non-blocking during the initial rollout.
+
 ## Local audit
 
 Install the project's development/test dependencies (including both local
